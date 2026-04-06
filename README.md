@@ -15,14 +15,11 @@ Built with the core web stack to ensure speed and compatibility:
 *   ⚡ **Fast Loading** – Lightweight code for instant page loads.
 *   🔍 **Product Gallery** – Detailed view of various luxury watch collections.
 
-## 📸 Preview
-*(Add a screenshot of your project here to make it look professional)*
-![Project Preview](screenshot.png)
 
 ## 🛠 Installation & Setup
 To run this project locally:
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com](https://github.com/abduhalil2145-netizen/Watch-Shop
+   git clone https://github.com/abduhalil2145-netizen/Watch-Shop
   
