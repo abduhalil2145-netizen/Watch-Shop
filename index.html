@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>LUMINA HOROLOGY | Premium Timepieces</title>
+    <link rel="stylesheet" href="./css/styel.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Premium Loader -->
+    <div id="loader-wrapper">
+        <div class="loader-container">
+            <div class="loader-ring"></div>
+            <div class="loader-ring-middle"></div>
+            <div class="loader-ring-inner"></div>
+            <div class="loader-logo">
+                <i class="fas fa-clock"></i>
+            </div>
+        </div>
+        <div class="loader-text">
+            <span>L</span><span>U</span><span>M</span><span>I</span><span>N</span><span>A</span>
+        </div>
+        <div class="loader-subtitle" id="loader-subtitle">CRAFTING TIMEPIECES</div>
+        <div class="loader-progress">
+            <div class="loader-progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Main Site -->
+    <div class="app-container">
+        <div class="animated-bg"></div>
+        <div class="noise-overlay"></div>
+
+        <!-- NAVBAR -->
+        <nav class="glass-nav">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-clock"></i>
+                    <div class="brand-pulse"></div>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-main">LUMINA</span>
+                    <span class="brand-sub">HOROLOGY</span>
+                </div>
+            </div>
+            <div class="nav-controls">
+                <!-- Language Selector -->
+                <!-- <div class="language-selector">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ru">RU</button>
+                    <button class="lang-btn" data-lang="uz">UZ</button>
+                </div> -->
+                
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Search masterpieces...">
+                </div>
+                <div class="icon-group">
+                    <button id="theme-toggle" class="icon-btn">
+                        <i class="fas fa-moon"></i>
+                        <span class="tooltip">Toggle Theme</span>
+                    </button>
+                    <button id="favorites-btn" class="icon-btn">
+                        <i class="fas fa-heart"></i>
+                        <span id="fav-badge" class="badge">0</span>
+                        <span class="tooltip">Favorites</span>
+                    </button>
+                    <button id="cart-btn" class="icon-btn">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span id="cart-badge" class="badge">0</span>
+                        <span class="tooltip">Cart</span>
+                    </button>
+                    <button id="orders-btn" class="icon-btn">
+                        <i class="fas fa-history"></i>
+                        <span class="tooltip">My Orders</span>
+                    </button>
+                    <button id="admin-dashboard-btn" class="icon-btn admin-icon" style="display:none;">
+                        <i class="fas fa-crown"></i>
+                        <span class="tooltip">Admin Panel</span>
+                    </button>
+                </div>
+                <div id="auth-buttons" class="auth-buttons">
+                    <button id="login-nav-btn" class="neon-btn small">Sign In</button>
+                    <button id="register-nav-btn" class="neon-btn small outline">Join</button>
+                </div>
+                <div id="user-menu" class="user-menu" style="display:none;">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-astronaut"></i>
+                    </div>
+                    <span id="welcome-user" class="welcome-text"></span>
+                    <button id="logout-btn" class="neon-btn small">Exit</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge" id="hero-badge">EST. 2024</div>
+                <h1 class="hero-title" id="hero-title">Where <span class="gradient-text">Time</span> Becomes Art</h1>
+                <p class="hero-subtitle" id="hero-subtitle">Discover our collection of precision-crafted timepieces, where every second tells a story of excellence.</p>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="stat-number">100+</span>
+                        <span class="stat-label" id="stat-products">Masterpieces</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label" id="stat-brands">Brand Partners</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label" id="stat-support">Concierge</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="category-strip">
+            <button class="cat-filter active" data-cat="all">
+                <i class="fas fa-layer-group"></i>
+                <span id="cat-all">All</span>
+            </button>
+            <button class="cat-filter" data-cat="Smart Watches">
+                <i class="fas fa-microchip"></i>
+                <span id="cat-smart">Smart Watches</span>
+            </button>
+            <button class="cat-filter" data-cat="Luxury">
+                <i class="fas fa-gem"></i>
+                <span id="cat-luxury">Luxury</span>
+            </button>
+            <button class="cat-filter" data-cat="Sport">
+                <i class="fas fa-running"></i>
+                <span id="cat-sport">Sport</span>
+            </button>
+            <button class="cat-filter" data-cat="Classic">
+                <i class="fas fa-hourglass-half"></i>
+                <span id="cat-classic">Classic</span>
+            </button>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="products-grid" class="products-grid"></div>
+
+        <!-- Cart Slide Panel -->
+        <div id="cart-panel" class="slide-panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span id="cart-title">Shopping Cart</span>
+                </div>
+                <button id="close-cart" class="close-panel"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="cart-items" class="cart-items"></div>
+            <div class="cart-footer">
+                <div class="cart-total"><span id="cart-total-label">Total:</span> $<span id="cart-total">0</span></div>
+                <button id="checkout-btn" class="neon-btn full" id="checkout-btn-text">Proceed to Checkout</button>
+            </div>
+        </div>
+
+        <!-- Favorites Slide Panel -->
+        <div id="favorites-panel" class="slide-panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-heart"></i>
+                    <span id="fav-title">Your Favorites</span>
+                </div>
+                <button id="close-fav" class="close-panel"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="favorites-items" class="cart-items"></div>
+        </div>
+
+        <!-- Orders Panel -->
+        <div id="orders-panel" class="slide-panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-history"></i>
+                    <span id="orders-title">My Orders</span>
+                </div>
+                <button id="close-orders" class="close-panel"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="orders-items" class="cart-items"></div>
+        </div>
+
+        <!-- Checkout Modal -->
+        <div id="checkout-modal" class="modal checkout-modal">
+            <div class="modal-content glass-card">
+                <span class="modal-close">&times;</span>
+                <div class="checkout-header">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2 id="checkout-title">Complete Your Order</h2>
+                    <p id="checkout-subtitle">Review your items and enter shipping details</p>
+                </div>
+                
+                <div class="checkout-steps">
+                    <div class="step active" data-step="1"><span id="step1-text">1. Review</span></div>
+                    <div class="step" data-step="2"><span id="step2-text">2. Details</span></div>
+                    <div class="step" data-step="3"><span id="step3-text">3. Payment</span></div>
+                </div>
+                
+                <div id="checkout-step-1" class="checkout-step active">
+                    <div id="checkout-summary"></div>
+                    <button class="neon-btn next-step" id="continue-shipping">Continue to Shipping</button>
+                </div>
+                
+                <div id="checkout-step-2" class="checkout-step">
+                    <h3><i class="fas fa-truck"></i> <span id="shipping-info-title">Shipping Information</span></h3>
+                    <form id="shipping-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label id="fullname-label">Full Name *</label>
+                                <input type="text" id="shipping-name" required placeholder="John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label id="email-label">Email *</label>
+                                <input type="email" id="shipping-email" required placeholder="john@example.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label id="phone-label">Phone Number *</label>
+                            <input type="tel" id="shipping-phone" required placeholder="+1 234 567 8900">
+                        </div>
+                        <div class="form-group">
+                            <label id="address-label">Address *</label>
+                            <input type="text" id="shipping-address" required placeholder="Street address">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label id="city-label">City *</label>
+                                <input type="text" id="shipping-city" required placeholder="City">
+                            </div>
+                            <div class="form-group">
+                                <label id="zip-label">Postal Code *</label>
+                                <input type="text" id="shipping-zip" required placeholder="Zip code">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label id="country-label">Country *</label>
+                            <input type="text" id="shipping-country" required placeholder="Country">
+                        </div>
+                        <div class="checkout-buttons">
+                            <button type="button" class="neon-btn outline back-step">Back</button>
+                            <button type="submit" class="neon-btn">Continue to Payment</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="checkout-step-3" class="checkout-step">
+                    <h3><i class="fas fa-credit-card"></i> <span id="payment-title">Payment Method</span></h3>
+                    <div class="payment-methods">
+                        <label class="payment-method">
+                            <input type="radio" name="payment" value="credit_card" checked>
+                            <i class="fab fa-cc-visa"></i> <span id="payment-card">Credit Card</span>
+                        </label>
+                        <label class="payment-method">
+                            <input type="radio" name="payment" value="paypal">
+                            <i class="fab fa-paypal"></i> PayPal
+                        </label>
+                        <label class="payment-method">
+                            <input type="radio" name="payment" value="crypto">
+                            <i class="fab fa-bitcoin"></i> <span id="payment-crypto">Cryptocurrency</span>
+                        </label>
+                    </div>
+                    <div id="payment-summary" class="payment-summary"></div>
+                    <div class="checkout-buttons">
+                        <button type="button" class="neon-btn outline back-step">Back</button>
+                        <button id="place-order-btn" class="neon-btn"><span id="place-order-text">Place Order</span> ✓</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Modal -->
+        <div id="product-modal" class="modal">
+            <div class="modal-content glass-card">
+                <span class="modal-close">&times;</span>
+                <div id="modal-details"></div>
+                <div class="modal-actions">
+                    <button id="modal-add-cart" class="neon-btn"><i class="fas fa-shopping-bag"></i> <span id="modal-add-cart-text">Add to Cart</span></button>
+                    <button id="modal-fav" class="neon-btn outline"><i class="fas fa-heart"></i> <span id="modal-fav-text">Favorite</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Modals -->
+        <div id="login-modal" class="modal auth-modal">
+            <div class="modal-content glass-card">
+                <span class="modal-close">&times;</span>
+                <div class="auth-icon"><i class="fas fa-key"></i></div>
+                <h3 id="login-title">Welcome Back</h3>
+                <p class="auth-subtitle" id="login-subtitle">Sign in to access your collection</p>
+                <input type="text" id="login-username" placeholder="Username">
+                <input type="password" id="login-password" placeholder="Password">
+                <button id="do-login" class="neon-btn full"><span id="login-btn-text">Sign In</span></button>
+                <div class="auth-footer"><span id="login-footer">New to Lumina?</span> <a href="#" id="switch-to-register"><span id="create-account-link">Create account</span></a></div>
+            </div>
+        </div>
+        
+        <div id="register-modal" class="modal auth-modal">
+            <div class="modal-content glass-card">
+                <span class="modal-close">&times;</span>
+                <div class="auth-icon"><i class="fas fa-user-plus"></i></div>
+                <h3 id="register-title">Create Account</h3>
+                <p class="auth-subtitle" id="register-subtitle">Join the Lumina family</p>
+                <input type="text" id="reg-username" placeholder="Username">
+                <input type="password" id="reg-password" placeholder="Password">
+                <button id="do-register" class="neon-btn full"><span id="register-btn-text">Register</span></button>
+                <div class="auth-footer"><span id="register-footer">Already have an account?</span> <a href="#" id="switch-to-login"><span id="signin-link">Sign In</span></a></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/app.js"></script>
+</body>
+
+</html>
