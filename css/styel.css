@@ -967,7 +967,61 @@ body.light-mode .animated-bg {
     text-align: right;
     margin-bottom: 15px;
 }
+/* Til Selector - Pastki chap */
+/* Language Selector - Bottom Left */
+.language-selector-bottom {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 1;
+    transform: translateY(0);
+}
+.language-selector-bottom.hide {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;  /* yashirin vaqtda bosilmaydi */
+}
 
+.lang-btn-bottom {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    padding: 6px 14px;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.lang-btn-bottom i {
+    margin-right: 6px;
+    font-size: 12px;
+}
+
+.lang-btn-bottom.active {
+    background: linear-gradient(135deg, #d4af37, #b8942e);
+    color: #0a0a14;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+}
+
+.lang-btn-bottom:hover:not(.active) {
+    color: #d4af37;
+    background: rgba(212, 175, 55, 0.1);
+}
+
+/* Light mode support */
+body.light-mode .language-selector-bottom {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(212, 175, 55, 0.5);
+}
+
+body.light-mode .lang-btn-bottom {
+    color: #333;
+}
+
+body.light-mode .lang-btn-bottom.active {
+    color: #fff;
+}
 /* ==================== TOAST NOTIFICATIONS ==================== */
 #toast-container {
     position: fixed;

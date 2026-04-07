@@ -60,7 +60,7 @@
                     <button class="lang-btn" data-lang="ru">RU</button>
                     <button class="lang-btn" data-lang="uz">UZ</button>
                 </div> -->
-                
+
                 <div class="search-wrapper">
                     <i class="fas fa-search"></i>
                     <input type="text" id="search-input" placeholder="Search masterpieces...">
@@ -108,7 +108,8 @@
             <div class="hero-content">
                 <div class="hero-badge" id="hero-badge">EST. 2024</div>
                 <h1 class="hero-title" id="hero-title">Where <span class="gradient-text">Time</span> Becomes Art</h1>
-                <p class="hero-subtitle" id="hero-subtitle">Discover our collection of precision-crafted timepieces, where every second tells a story of excellence.</p>
+                <p class="hero-subtitle" id="hero-subtitle">Discover our collection of precision-crafted timepieces,
+                    where every second tells a story of excellence.</p>
                 <div class="hero-stats">
                     <div class="hero-stat">
                         <span class="stat-number">100+</span>
@@ -192,7 +193,15 @@
             </div>
             <div id="orders-items" class="cart-items"></div>
         </div>
-
+        <!-- Til Selector - Chap tomonda pastda -->
+        <div class="language-selector-bottom">
+            <button class="lang-btn-bottom active" data-lang="uz">
+                <i class="fas fa-language"></i> O'zbek
+            </button>
+            <button class="lang-btn-bottom" data-lang="ru">
+                <i class="fas fa-language"></i> Русский
+            </button>
+        </div>
         <!-- Checkout Modal -->
         <div id="checkout-modal" class="modal checkout-modal">
             <div class="modal-content glass-card">
@@ -202,18 +211,18 @@
                     <h2 id="checkout-title">Complete Your Order</h2>
                     <p id="checkout-subtitle">Review your items and enter shipping details</p>
                 </div>
-                
+
                 <div class="checkout-steps">
                     <div class="step active" data-step="1"><span id="step1-text">1. Review</span></div>
                     <div class="step" data-step="2"><span id="step2-text">2. Details</span></div>
                     <div class="step" data-step="3"><span id="step3-text">3. Payment</span></div>
                 </div>
-                
+
                 <div id="checkout-step-1" class="checkout-step active">
                     <div id="checkout-summary"></div>
                     <button class="neon-btn next-step" id="continue-shipping">Continue to Shipping</button>
                 </div>
-                
+
                 <div id="checkout-step-2" class="checkout-step">
                     <h3><i class="fas fa-truck"></i> <span id="shipping-info-title">Shipping Information</span></h3>
                     <form id="shipping-form">
@@ -255,7 +264,7 @@
                         </div>
                     </form>
                 </div>
-                
+
                 <div id="checkout-step-3" class="checkout-step">
                     <h3><i class="fas fa-credit-card"></i> <span id="payment-title">Payment Method</span></h3>
                     <div class="payment-methods">
@@ -275,7 +284,8 @@
                     <div id="payment-summary" class="payment-summary"></div>
                     <div class="checkout-buttons">
                         <button type="button" class="neon-btn outline back-step">Back</button>
-                        <button id="place-order-btn" class="neon-btn"><span id="place-order-text">Place Order</span> ✓</button>
+                        <button id="place-order-btn" class="neon-btn"><span id="place-order-text">Place Order</span>
+                            ✓</button>
                     </div>
                 </div>
             </div>
@@ -287,8 +297,10 @@
                 <span class="modal-close">&times;</span>
                 <div id="modal-details"></div>
                 <div class="modal-actions">
-                    <button id="modal-add-cart" class="neon-btn"><i class="fas fa-shopping-bag"></i> <span id="modal-add-cart-text">Add to Cart</span></button>
-                    <button id="modal-fav" class="neon-btn outline"><i class="fas fa-heart"></i> <span id="modal-fav-text">Favorite</span></button>
+                    <button id="modal-add-cart" class="neon-btn"><i class="fas fa-shopping-bag"></i> <span
+                            id="modal-add-cart-text">Add to Cart</span></button>
+                    <button id="modal-fav" class="neon-btn outline"><i class="fas fa-heart"></i> <span
+                            id="modal-fav-text">Favorite</span></button>
                 </div>
             </div>
         </div>
@@ -303,10 +315,11 @@
                 <input type="text" id="login-username" placeholder="Username">
                 <input type="password" id="login-password" placeholder="Password">
                 <button id="do-login" class="neon-btn full"><span id="login-btn-text">Sign In</span></button>
-                <div class="auth-footer"><span id="login-footer">New to Lumina?</span> <a href="#" id="switch-to-register"><span id="create-account-link">Create account</span></a></div>
+                <div class="auth-footer"><span id="login-footer">New to Lumina?</span> <a href="#"
+                        id="switch-to-register"><span id="create-account-link">Create account</span></a></div>
             </div>
         </div>
-        
+
         <div id="register-modal" class="modal auth-modal">
             <div class="modal-content glass-card">
                 <span class="modal-close">&times;</span>
@@ -316,7 +329,8 @@
                 <input type="text" id="reg-username" placeholder="Username">
                 <input type="password" id="reg-password" placeholder="Password">
                 <button id="do-register" class="neon-btn full"><span id="register-btn-text">Register</span></button>
-                <div class="auth-footer"><span id="register-footer">Already have an account?</span> <a href="#" id="switch-to-login"><span id="signin-link">Sign In</span></a></div>
+                <div class="auth-footer"><span id="register-footer">Already have an account?</span> <a href="#"
+                        id="switch-to-login"><span id="signin-link">Sign In</span></a></div>
             </div>
         </div>
     </div>

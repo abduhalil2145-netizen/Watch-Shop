@@ -4,15 +4,26 @@ const STORAGE = {
     CURRENT_USER: 'lumina_currentUser',
     PRODUCTS: 'lumina_products',
     CART: 'lumina_cart',
-    FAVORITES: 'lumina_favorites'
+    FAVORITES: 'lumina_favorites',
+    CATEGORIES: 'lumina_categories'
 };
 
 let products = [];
+let categories = [];
 let currentEditId = null;
+let currentEditCategoryId = null;
 
-// ==================== INITIALIZE DEFAULT DATA IF MISSING ====================
+// ==================== DEFAULT CATEGORIES ====================
+const DEFAULT_CATEGORIES = [
+    { id: 'cat1', name: 'Smart Watches', icon: 'fa-microchip', color: '#00d4ff' },
+    { id: 'cat2', name: 'Luxury', icon: 'fa-gem', color: '#d4af37' },
+    { id: 'cat3', name: 'Sport', icon: 'fa-running', color: '#ff6b6b' },
+    { id: 'cat4', name: 'Classic', icon: 'fa-hourglass-half', color: '#c0c0c0' }
+];
+
+// ==================== INITIALIZE DEFAULT DATA ====================
 function initializeDefaultData() {
-    // Check if users exist, if not create default users
+    // Initialize users
     if (!localStorage.getItem(STORAGE.USERS)) {
         const defaultUsers = [
             { username: 'admin', password: '12345', isAdmin: true },
@@ -22,7 +33,13 @@ function initializeDefaultData() {
         console.log('Default users created');
     }
     
-    // Check if products exist, if not create default products
+    // Initialize categories
+    if (!localStorage.getItem(STORAGE.CATEGORIES)) {
+        localStorage.setItem(STORAGE.CATEGORIES, JSON.stringify(DEFAULT_CATEGORIES));
+        console.log('Default categories created');
+    }
+    
+    // Initialize products
     if (!localStorage.getItem(STORAGE.PRODUCTS)) {
         const defaultProducts = [
             { id: 'p1', name: 'AURORA X1', price: 1299, category: 'Smart Watches', description: 'Ultimate smartwatch with AMOLED display, 7-day battery, and titanium build.', image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400' },
@@ -45,26 +62,21 @@ function initializeDefaultData() {
 function checkAdminAuth() {
     try {
         const currentUserStr = localStorage.getItem(STORAGE.CURRENT_USER);
-        console.log('Current user from localStorage:', currentUserStr);
         
         if (!currentUserStr) {
-            console.log('No user logged in');
             showToast('Please login as admin first!', 'error');
             redirectToShop();
             return false;
         }
         
         const currentUser = JSON.parse(currentUserStr);
-        console.log('Parsed user:', currentUser);
         
         if (!currentUser.isAdmin) {
-            console.log('User is not admin');
             showToast('Admin access only!', 'error');
             redirectToShop();
             return false;
         }
         
-        console.log('Admin access granted');
         const welcomeSpan = document.getElementById('admin-welcome');
         if (welcomeSpan) {
             welcomeSpan.innerHTML = `<i class="fas fa-user-shield"></i> Welcome, ${currentUser.username}`;
@@ -85,13 +97,22 @@ function redirectToShop() {
 }
 
 // ==================== LOAD DATA ====================
+function loadCategories() {
+    const storedCategories = localStorage.getItem(STORAGE.CATEGORIES);
+    categories = storedCategories ? JSON.parse(storedCategories) : DEFAULT_CATEGORIES;
+    if (categories.length === 0) {
+        categories = [...DEFAULT_CATEGORIES];
+    }
+    renderCategorySelect();
+    renderCategoriesList();
+    renderCategoryStats();
+}
+
 function loadProducts() {
     const storedProducts = localStorage.getItem(STORAGE.PRODUCTS);
     products = storedProducts ? JSON.parse(storedProducts) : [];
-    console.log('Loaded products:', products.length);
     updateStatistics();
     renderProductsTable();
-    renderCategoryStats();
 }
 
 // ==================== UPDATE STATISTICS ====================
@@ -112,6 +133,214 @@ function updateStatistics() {
     if (totalValueEl) totalValueEl.textContent = `$${totalValue.toLocaleString()}`;
 }
 
+// ==================== RENDER CATEGORY SELECT (Dropdown) ====================
+function renderCategorySelect() {
+    const select = document.getElementById('product-category');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">-- Select Category --</option>' + 
+        categories.map(cat => `<option value="${escapeHtml(cat.name)}">${escapeHtml(cat.name)}</option>`).join('');
+}
+
+// ==================== RENDER CATEGORIES LIST (Admin Panel) ====================
+function renderCategoriesList() {
+    const container = document.getElementById('categories-list');
+    if (!container) return;
+    
+    if (categories.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-folder-open"></i><p>No categories yet. Create one!</p></div>';
+        return;
+    }
+    
+    container.innerHTML = categories.map(cat => `
+        <div class="category-card" data-id="${cat.id}">
+            <div class="category-icon" style="background: ${cat.color}20; border-color: ${cat.color}">
+                <i class="fas ${cat.icon}" style="color: ${cat.color}"></i>
+            </div>
+            <div class="category-info">
+                <h4>${escapeHtml(cat.name)}</h4>
+                <p class="category-product-count">${products.filter(p => p.category === cat.name).length} products</p>
+            </div>
+            <div class="category-actions">
+                <button class="action-btn edit-cat-btn" onclick="editCategory('${cat.id}')">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn delete-cat-btn" onclick="deleteCategory('${cat.id}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ==================== RENDER CATEGORY STATS ====================
+function renderCategoryStats() {
+    const categoryMap = {};
+    products.forEach(product => {
+        if (!categoryMap[product.category]) {
+            categoryMap[product.category] = { count: 0, totalValue: 0 };
+        }
+        categoryMap[product.category].count++;
+        categoryMap[product.category].totalValue += product.price;
+    });
+    
+    const container = document.getElementById('category-stats');
+    if (!container) return;
+    
+    if (Object.keys(categoryMap).length === 0) {
+        container.innerHTML = '<div class="stat-card">No categories yet</div>';
+        return;
+    }
+    
+    container.innerHTML = Object.entries(categoryMap).map(([category, stats]) => `
+        <div class="stat-card-mini">
+            <i class="fas fa-folder"></i>
+            <h4>${escapeHtml(category)}</h4>
+            <p>📦 ${stats.count} products</p>
+            <p>💰 $${stats.totalValue.toLocaleString()}</p>
+        </div>
+    `).join('');
+}
+
+// ==================== CATEGORY CRUD ====================
+function openCategoryModal(mode = 'add', category = null) {
+    const modal = document.getElementById('category-modal');
+    const modalTitle = document.getElementById('category-modal-title');
+    const categoryId = document.getElementById('category-id');
+    const categoryName = document.getElementById('category-name');
+    const categoryIcon = document.getElementById('category-icon');
+    const categoryColor = document.getElementById('category-color');
+    const submitBtn = document.getElementById('submit-category');
+    
+    if (!modal) return;
+    
+    if (mode === 'edit' && category) {
+        modalTitle.textContent = 'Edit Category';
+        categoryId.value = category.id;
+        categoryName.value = category.name;
+        categoryIcon.value = category.icon;
+        categoryColor.value = category.color;
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Category';
+        currentEditCategoryId = category.id;
+    } else {
+        modalTitle.textContent = 'Add New Category';
+        categoryId.value = '';
+        categoryName.value = '';
+        categoryIcon.value = 'fa-folder';
+        categoryColor.value = '#00d4ff';
+        submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Category';
+        currentEditCategoryId = null;
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeCategoryModal() {
+    const modal = document.getElementById('category-modal');
+    if (modal) modal.style.display = 'none';
+    currentEditCategoryId = null;
+}
+
+function saveCategory() {
+    const name = document.getElementById('category-name')?.value.trim();
+    const icon = document.getElementById('category-icon')?.value.trim();
+    const color = document.getElementById('category-color')?.value;
+    
+    if (!name) {
+        showToast('Please enter category name', 'error');
+        return;
+    }
+    
+    if (currentEditCategoryId) {
+        // Edit existing category
+        const oldCategory = categories.find(c => c.id === currentEditCategoryId);
+        const oldName = oldCategory.name;
+        
+        const index = categories.findIndex(c => c.id === currentEditCategoryId);
+        if (index !== -1) {
+            categories[index] = { 
+                ...categories[index], 
+                name: name, 
+                icon: icon || 'fa-folder', 
+                color: color || '#00d4ff' 
+            };
+            
+            // Update products with new category name
+            products = products.map(p => {
+                if (p.category === oldName) {
+                    return { ...p, category: name };
+                }
+                return p;
+            });
+            
+            localStorage.setItem(STORAGE.PRODUCTS, JSON.stringify(products));
+            showToast('Category updated successfully!', 'success');
+        }
+    } else {
+        // Add new category
+        const exists = categories.some(c => c.name.toLowerCase() === name.toLowerCase());
+        if (exists) {
+            showToast('Category already exists!', 'error');
+            return;
+        }
+        
+        const newCategory = {
+            id: 'cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+            name: name,
+            icon: icon || 'fa-folder',
+            color: color || '#00d4ff'
+        };
+        categories.push(newCategory);
+        showToast('Category added successfully!', 'success');
+    }
+    
+    localStorage.setItem(STORAGE.CATEGORIES, JSON.stringify(categories));
+    loadCategories();
+    loadProducts();
+    closeCategoryModal();
+}
+
+function editCategory(id) {
+    const category = categories.find(c => c.id === id);
+    if (category) {
+        openCategoryModal('edit', category);
+    }
+}
+
+function deleteCategory(id) {
+    const category = categories.find(c => c.id === id);
+    if (!category) return;
+    
+    const productCount = products.filter(p => p.category === category.name).length;
+    
+    if (productCount > 0) {
+        if (confirm(`Category "${category.name}" has ${productCount} product(s). Deleting it will remove these products from the category. Continue?`)) {
+            // Remove category from products (set to empty or first category)
+            products = products.map(p => {
+                if (p.category === category.name) {
+                    return { ...p, category: 'Uncategorized' };
+                }
+                return p;
+            });
+            localStorage.setItem(STORAGE.PRODUCTS, JSON.stringify(products));
+        } else {
+            return;
+        }
+    }
+    
+    categories = categories.filter(c => c.id !== id);
+    localStorage.setItem(STORAGE.CATEGORIES, JSON.stringify(categories));
+    loadCategories();
+    loadProducts();
+    showToast(`Category "${category.name}" deleted`, 'success');
+}
+
+window.openCategoryModal = openCategoryModal;
+window.closeCategoryModal = closeCategoryModal;
+window.saveCategory = saveCategory;
+window.editCategory = editCategory;
+window.deleteCategory = deleteCategory;
+
 // ==================== RENDER PRODUCTS TABLE ====================
 function renderProductsTable() {
     const tbody = document.getElementById('products-table-body');
@@ -126,7 +355,7 @@ function renderProductsTable() {
         <tr>
             <td><img src="${product.image}" alt="${product.name}" class="product-image-preview" onerror="this.src='https://via.placeholder.com/50'"></td>
             <td><strong>${escapeHtml(product.name)}</strong><br><small>${escapeHtml(product.description.substring(0, 50))}...</small></td>
-            <td>${product.category}</td>
+            <td><span class="category-badge">${escapeHtml(product.category)}</span></td>
             <td>$${product.price.toLocaleString()}</td>
             <td class="action-buttons">
                 <button class="action-btn edit-btn" onclick="editProduct('${product.id}')">
@@ -150,35 +379,6 @@ function escapeHtml(str) {
     });
 }
 
-// ==================== RENDER CATEGORY STATS ====================
-function renderCategoryStats() {
-    const categoryMap = {};
-    products.forEach(product => {
-        if (!categoryMap[product.category]) {
-            categoryMap[product.category] = { count: 0, totalValue: 0 };
-        }
-        categoryMap[product.category].count++;
-        categoryMap[product.category].totalValue += product.price;
-    });
-    
-    const container = document.getElementById('category-stats');
-    if (!container) return;
-    
-    if (Object.keys(categoryMap).length === 0) {
-        container.innerHTML = '<div class="stat-card">No categories yet</div>';
-        return;
-    }
-    
-    container.innerHTML = Object.entries(categoryMap).map(([category, stats]) => `
-        <div class="stat-card" style="padding: 15px;">
-            <i class="fas fa-folder"></i>
-            <h4>${category}</h4>
-            <p>Products: ${stats.count}</p>
-            <p>Value: $${stats.totalValue.toLocaleString()}</p>
-        </div>
-    `).join('');
-}
-
 // ==================== ADD/UPDATE PRODUCT ====================
 function saveProduct(event) {
     event.preventDefault();
@@ -189,7 +389,7 @@ function saveProduct(event) {
     const description = document.getElementById('product-description')?.value;
     let image = document.getElementById('product-image-url')?.value;
     
-    if (!name || !price || !description) {
+    if (!name || !price || !category || !description) {
         showToast('Please fill all required fields', 'error');
         return;
     }
@@ -248,6 +448,14 @@ function editProduct(id) {
     if (submitBtn) submitBtn.textContent = 'Update Product';
     if (cancelBtn) cancelBtn.style.display = 'inline-block';
     
+    // Show image preview
+    const previewContainer = document.getElementById('image-preview-container');
+    if (previewContainer && product.image) {
+        previewContainer.innerHTML = `<img src="${product.image}" class="image-preview" alt="Preview">`;
+        const clearBtn = document.getElementById('clear-image');
+        if (clearBtn) clearBtn.style.display = 'block';
+    }
+    
     const section = document.querySelector('.admin-section');
     if (section) section.scrollIntoView({ behavior: 'smooth' });
 }
@@ -290,6 +498,7 @@ function clearForm() {
     const urlInput = document.getElementById('product-image-url');
     const fileInput = document.getElementById('product-image-file');
     const previewContainer = document.getElementById('image-preview-container');
+    const clearBtn = document.getElementById('clear-image');
     
     if (nameInput) nameInput.value = '';
     if (priceInput) priceInput.value = '';
@@ -297,27 +506,98 @@ function clearForm() {
     if (urlInput) urlInput.value = '';
     if (fileInput) fileInput.value = '';
     if (previewContainer) previewContainer.innerHTML = '';
+    if (clearBtn) clearBtn.style.display = 'none';
 }
 
 // ==================== IMAGE UPLOAD ====================
-const fileInput = document.getElementById('product-image-file');
-if (fileInput) {
+function setupFileUpload() {
+    const uploadArea = document.getElementById('file-upload-area');
+    const fileInput = document.getElementById('product-image-file');
+    const urlInput = document.getElementById('product-image-url');
+    const clearBtn = document.getElementById('clear-image');
+    const previewContainer = document.getElementById('image-preview-container');
+    
+    if (!uploadArea) return;
+    
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('drag-over');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('drag-over');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            handleImageFile(file);
+        } else {
+            showToast('Please drop an image file', 'error');
+        }
+    });
+    
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                const imageUrl = ev.target.result;
-                const urlInput = document.getElementById('product-image-url');
-                if (urlInput) urlInput.value = imageUrl;
-                const preview = document.getElementById('image-preview-container');
-                if (preview) {
-                    preview.innerHTML = `<img src="${imageUrl}" class="image-preview" alt="Preview">`;
-                }
-            };
-            reader.readAsDataURL(file);
+            handleImageFile(file);
         }
     });
+    
+    urlInput.addEventListener('input', () => {
+        const url = urlInput.value;
+        if (url && (url.startsWith('http') || url.startsWith('data:'))) {
+            showImagePreview(url);
+            if (clearBtn) clearBtn.style.display = 'block';
+        } else if (!url) {
+            clearImagePreview();
+            if (clearBtn) clearBtn.style.display = 'none';
+        }
+    });
+    
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            urlInput.value = '';
+            fileInput.value = '';
+            clearImagePreview();
+            clearBtn.style.display = 'none';
+        });
+    }
+    
+    function handleImageFile(file) {
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('Image too large (max 5MB)', 'error');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const imageUrl = ev.target.result;
+            urlInput.value = imageUrl;
+            showImagePreview(imageUrl);
+            if (clearBtn) clearBtn.style.display = 'block';
+            showToast('Image uploaded successfully!', 'success');
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    function showImagePreview(url) {
+        if (previewContainer) {
+            previewContainer.innerHTML = `<img src="${url}" class="image-preview" alt="Preview" onerror="this.style.display='none'">`;
+        }
+    }
+    
+    function clearImagePreview() {
+        if (previewContainer) {
+            previewContainer.innerHTML = '';
+        }
+    }
 }
 
 // ==================== EXPORT DATA ====================
@@ -350,6 +630,7 @@ window.bulkDelete = bulkDelete;
 // ==================== REFRESH STATS ====================
 function refreshStats() {
     loadProducts();
+    loadCategories();
     showToast('Statistics refreshed!', 'success');
 }
 
@@ -419,126 +700,38 @@ function setupEventListeners() {
         logoutBtn.removeEventListener('click', logout);
         logoutBtn.addEventListener('click', logout);
     }
-}
-setupFileUpload()
-// Professional File Upload Handling
-function setupFileUpload() {
-    const uploadArea = document.getElementById('file-upload-area');
-    const fileInput = document.getElementById('product-image-file');
-    const urlInput = document.getElementById('product-image-url');
-    const clearBtn = document.getElementById('clear-image');
-    const previewContainer = document.getElementById('image-preview-container');
     
-    if (!uploadArea) return;
+    const closeModalBtn = document.querySelector('#category-modal .modal-close');
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeCategoryModal);
+    }
     
-    // Click to upload
-    uploadArea.addEventListener('click', () => {
-        fileInput.click();
-    });
-    
-    // Drag and drop
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.classList.add('drag-over');
-    });
-    
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.classList.remove('drag-over');
-    });
-    
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            handleImageFile(file);
-        } else {
-            showToast('Please drop an image file', 'error');
-        }
-    });
-    
-    // File input change
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            handleImageFile(file);
-        }
-    });
-    
-    // URL input change
-    urlInput.addEventListener('input', () => {
-        const url = urlInput.value;
-        if (url && (url.startsWith('http') || url.startsWith('data:'))) {
-            showImagePreview(url);
-            if (clearBtn) clearBtn.style.display = 'block';
-        } else if (!url) {
-            clearImagePreview();
-            if (clearBtn) clearBtn.style.display = 'none';
-        }
-    });
-    
-    // Clear button
-    if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
-            urlInput.value = '';
-            fileInput.value = '';
-            clearImagePreview();
-            clearBtn.style.display = 'none';
+    // Close modal when clicking outside
+    const modal = document.getElementById('category-modal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeCategoryModal();
+            }
         });
-    }
-    
-    function handleImageFile(file) {
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('Image too large (max 5MB)', 'error');
-            return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-            const imageUrl = ev.target.result;
-            urlInput.value = imageUrl;
-            showImagePreview(imageUrl);
-            if (clearBtn) clearBtn.style.display = 'block';
-            showToast('Image uploaded successfully!', 'success');
-        };
-        reader.readAsDataURL(file);
-    }
-    
-    function showImagePreview(url) {
-        if (previewContainer) {
-            previewContainer.innerHTML = `<img src="${url}" class="image-preview" alt="Preview" onerror="this.style.display='none'">`;
-        }
-    }
-    
-    function clearImagePreview() {
-        if (previewContainer) {
-            previewContainer.innerHTML = '';
-        }
     }
 }
 
-// Call this in your init function
-// Add: setupFileUpload();
 // ==================== INITIALIZATION ====================
 function init() {
     console.log('Admin dashboard initializing...');
     
-    // Initialize default data
     initializeDefaultData();
-    
-    // Check admin authentication
     if (!checkAdminAuth()) return;
     
-    // Load products
+    loadCategories();
     loadProducts();
-    
-    // Setup event listeners
     setupEventListeners();
+    setupFileUpload();
     
     console.log('Admin dashboard ready');
 }
 
-// Start the admin dashboard when DOM is loaded
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
